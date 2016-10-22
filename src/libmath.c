@@ -6,6 +6,8 @@
 #include <lua.h>
 #include <lauxlib.h>
 
+#define PI ((lua_Number)(3.1415926535897932384626433832795028841971))
+
 static int l_math_abs(lua_State *L)
 {
 	lua_Number d = luaL_checknumber(L, 1);
@@ -75,6 +77,14 @@ static int l_math_cos(lua_State *L)
 	return 1;
 }
 
+static int l_math_top(lua_State *L)
+{
+	int n = lua_gettop(L);
+
+	lua_pushnumber(L, n);
+	return 1;
+}
+
 static const luaL_Reg my_math_lib[] = {
 	{"abs", l_math_abs},
 	{"max", l_math_max},
@@ -82,15 +92,14 @@ static const luaL_Reg my_math_lib[] = {
 	{"log", l_math_log},
 	{"sin", l_math_sin},
 	{"cos", l_math_cos},
-	{NULL, NULL}
-}
 
-extern int luaopen_math (lua_State *L) {
-  luaL_newlib(L, mathlib);
+	{"top", l_math_top},
+	{NULL, NULL}
+};
+
+extern int luaopen_libmath (lua_State *L) {
+  luaL_newlib(L, my_math_lib);
   lua_pushnumber(L, PI);
   lua_setfield(L, -2, "pi");
-  lua_pushnumber(L, HUGE_VAL);
-  lua_setfield(L, -2, "huge");
   return 1;
 }
-
